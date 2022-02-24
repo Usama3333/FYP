@@ -24,7 +24,7 @@ class Student:
     def __init__(self,studentroot):
         self.studentroot = studentroot
         self.studentroot.geometry("1530x790+0+0")
-        self.studentroot.title("face Recognition System")
+        self.studentroot.title("Student System")
         
         #------------------------ variables -----------------------------
         self.var_dep = StringVar()

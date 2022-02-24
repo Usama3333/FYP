@@ -1,20 +1,26 @@
 from tkinter import*
 from tkinter import ttk
+from tkinter.tix import CheckList
 from PIL import Image,ImageTk
 from cv2 import VideoCapture
 from student import Student
-from train import Train
 import os
 import cv2
 import numpy as np
 from tkinter import messagebox
 import mysql.connector
+from time import strftime
+from datetime import datetime
+from train import Train
+from attendance_system import attendance_system
 
 class Face_Recognition_System:
+    
+    mark_check=None
     def __init__(self,homeroot):
         self.homeroot = homeroot
         self.homeroot.geometry("1530x790+0+0")
-        self.homeroot.title("face Recognition System")
+        self.homeroot.title("face Recognition Attendance System")
         
         bgimg = Image.open(r".\login\images\plain-white-background.jpg")
         self.bg = ImageTk.PhotoImage(bgimg)
@@ -71,7 +77,7 @@ class Face_Recognition_System:
         img4=img4.resize((150,150),Image.ANTIALIAS)
         self.photoimg4=ImageTk.PhotoImage(img4)
         
-        b4=Button(self.homeroot, image=self.photoimg4,cursor="hand2",border=0,bg="white",activebackground="#a43a8e")
+        b4=Button(self.homeroot, image=self.photoimg4,command=self.attendance,cursor="hand2",border=0,bg="white",activebackground="#a43a8e")
         b4.place(x=580,y=500,width=150,height=150)
         
         Attendance_label=Label(self.homeroot,text="Attendance",border=1,font=("times new roman",15),bg="white",fg="#a43a8e")
@@ -113,7 +119,7 @@ class Face_Recognition_System:
     # ------------------------------ Button Functions --------------------------------------------
     def student_details(self):
         self.new_window=Toplevel(self.homeroot)
-        self.app=Student(self.new_window)
+        self.app=Student(self.new_window) 
         
     def train_model(self):
         try:
@@ -157,6 +163,7 @@ class Face_Recognition_System:
                 
                 conn=mysql.connector.connect(host="localhost",username="root",password="usama12345",database="user")
                 my_cursor=conn.cursor()
+                
                 my_cursor.execute("select std_name from student where std_rollnum="+str(id))
                 std_name=my_cursor.fetchone()
                 std_name="+".join(std_name)
@@ -173,12 +180,17 @@ class Face_Recognition_System:
                 std_sec=my_cursor.fetchone()
                 std_sec="+".join(std_sec)
                 
+                my_cursor.execute("select std_semester from student where std_rollnum="+str(id))
+                std_sem=my_cursor.fetchone()
+                std_sem="+".join(std_sem)
+                
                 
                 if confidence>77:
-                    cv2.putText(img,f"Roll:{std_rollno}",(x,y-65),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
-                    cv2.putText(img,f"Name:{std_name}",(x,y-45),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
-                    cv2.putText(img,f"Department:{std_dep}",(x,y-25),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
-                    cv2.putText(img,f"Section:{std_sec}",(x,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
+                    cv2.putText(img,f"Roll:{std_rollno}",(x,y-75),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),2)
+                    cv2.putText(img,f"Name:{std_name}",(x,y-55),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),2)
+                    cv2.putText(img,f"Department:{std_dep}",(x,y-35),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),2)
+                    cv2.putText(img,f"Section:{std_sec}",(x,y-15),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),2)
+                    self.mark_attendance(std_rollno,std_name,std_dep,std_sec,std_sem)
                 else:
                     cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),3)
                     cv2.putText(img,"Unknown Face",(x,y-25),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,255),3)
@@ -200,10 +212,29 @@ class Face_Recognition_System:
             cv2.imshow("Welcome To FaceRecognition",img)
             
             if cv2.waitKey(1)==13:
+                if self.mark_check == True :
+                    messagebox.showinfo("Success","The Attendance is Marked Successfully")
                 break
         video_cap.release()
         cv2.destroyAllWindows()
+        
+    def mark_attendance(self,rollno,name,dep,sec,sem):
+        with open("attendance/attendance.csv","r+",newline="\n") as f:
+            myDataList=f.readlines()
+            name_list=[]
+            for line in myDataList:
+                entry=line.split((","))
+                name_list.append(entry[0])
+            if((rollno not in name_list) and (name not in name_list) and (dep not in name_list) and (sec not in name_list)):
+                now=datetime.now()
+                d1=now.strftime("%d/%m/%y")
+                dtString=now.strftime("%H:%M:%S")
+                f.writelines(f"\n{rollno},{name},{dep},{sec},{sem},{dtString},{d1},Present")
+                self.mark_check=True
             
+    def attendance(self):
+        self.new_window=Toplevel(self.homeroot)
+        self.app=attendance_system(self.new_window)   
             
     def exit(self):
         self.homeroot.destroy()
