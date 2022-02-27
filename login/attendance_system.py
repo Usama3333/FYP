@@ -1,3 +1,5 @@
+from distutils import command
+from fileinput import close
 from importlib.resources import contents
 from multiprocessing import Value
 from operator import delitem
@@ -11,6 +13,7 @@ import os
 import csv
 from tkinter import filedialog
 
+fln=""
 mydata=[]
 
 class attendance_system:
@@ -104,7 +107,7 @@ class attendance_system:
         attendance_label.grid(row=0,column=2,padx=5,sticky=W)
         
         attendance_combo=ttk.Combobox(information_label,font=("times new roman",12),width=20,textvariable=self.std_att,state="readonly")
-        attendance_combo["values"]=("Select Attendance","present","absent")
+        attendance_combo["values"]=("Select Attendance","Present","Absent")
         attendance_combo.current(0)
         attendance_combo.grid(row=0,column=3,padx=5,pady=10)
         
@@ -122,7 +125,7 @@ class attendance_system:
         bg="white", activeforeground="white", activebackground="#a43a8e",cursor="hand2")
         export_csv_btn.grid(row=0,column=1)
         
-        update_btn=Button(Button_frame,width=13,text="Update",font=("times new roman", 15, "bold"), borderwidth=1, fg="#a43a8e",
+        update_btn=Button(Button_frame,width=13,text="Update",command=self.update,font=("times new roman", 15, "bold"), borderwidth=1, fg="#a43a8e",
         bg="white", activeforeground="white", activebackground="#a43a8e",cursor="hand2")
         update_btn.grid(row=0,column=2)
         
@@ -187,7 +190,7 @@ class attendance_system:
                 self.attendance_table.insert("",END,value=i)
                 
     def importcsv(self):
-        global mydata
+        global mydata,fln
         mydata.clear()
         fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("ALL Files","*.*")),parent=self.attendanceroot)
         with open(fln) as myfile:
@@ -233,6 +236,46 @@ class attendance_system:
         self.time.set("")
         self.date.set("")
         self.std_att.set("")
+        
+    def update(self):
+        yesno=messagebox.askyesno("Update Data","Are you Sure You Want To Update Data?")
+        if yesno>0:
+            List_Update=[]
+            file=open(str(fln),'r')
+            reader=csv.reader(file)
+            for row in reader:
+                if len(row)!=0:
+                    # if row[0]!=self.std_rollno:
+                    #     messagebox.showerror("Error","You Cannot Change Students Roll Number Edit any other Field please !",parent=self.attendanceroot)
+                    if row[0]==self.std_rollno.get():
+                        row[1]=self.std_name.get()
+                        row[2]=self.std_dep.get()
+                        row[3]=self.std_sec.get()
+                        row[4]=self.std_sem.get()
+                        row[5]=self.time.get()
+                        row[6]=self.date.get()
+                        row[7]=self.std_att.get()
+                        List_Update.append(row)
+                    else:
+                        List_Update.append(row)
+                else:
+                    List_Update.append(row)
+            # print(List_Update)
+            file.close()
+            file=open(str(fln),'w+',newline='')
+            write=csv.writer(file)
+            write.writerows(List_Update)
+            file.seek(0)
+            mydata.clear()
+            with open(fln) as myfile:
+                csvread=csv.reader(myfile,delimiter=",")
+                for i in csvread:
+                    mydata.append(i)
+                self.fetchdata(mydata)
+            messagebox.showinfo("Success","Your Data Is Updated Successfully",parent=self.attendanceroot)
+            file.close()
+        else:
+            return
 
 
 if __name__ == "__main__":
