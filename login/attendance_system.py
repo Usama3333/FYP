@@ -209,7 +209,7 @@ class attendance_system:
                 exp_write=csv.writer(myfile,delimiter=",")
                 for i in mydata:
                     exp_write.writerow(i)
-                messagebox.showinfo("Data Export","Your Data is exported Successfully!")
+                messagebox.showinfo("Data Export","Your Data is exported Successfully!",parent=self.attendanceroot)
         except Exception as ex:
             messagebox.showerror("Error",f"Due To : {str(ex)}",parent=self.attendanceroot)
         
@@ -238,7 +238,7 @@ class attendance_system:
         self.std_att.set("")
         
     def update(self):
-        yesno=messagebox.askyesno("Update Data","Are you Sure You Want To Update Data?")
+        yesno=messagebox.askyesno("Update Data","Are you Sure You Want To Update Data?",parent=self.attendanceroot)
         if yesno>0:
             List_Update=[]
             file=open(str(fln),'r')

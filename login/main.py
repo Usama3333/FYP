@@ -16,6 +16,10 @@ def main():
 
 class login_window:
     def __init__(self,loginhomeroot):
+        
+        self.var_user = StringVar()
+        self.var_pass = StringVar()
+        
         self.loginhomeroot = loginhomeroot
         self.loginhomeroot.title("Login")
         self.loginhomeroot.geometry("1550x800+0+0")
@@ -44,13 +48,13 @@ class login_window:
         # Email Field
         username=lbl=Label(frame,text="Email",font=("times new roman",15,"bold"),fg="white",bg="#a43a8e")
         username.place(x=70,y=160)
-        self.txtuser=ttk.Entry(frame,font=("times new roman",15,"bold"))
+        self.txtuser=ttk.Entry(frame,font=("times new roman",15,"bold"),textvariable=self.var_user)
         self.txtuser.place(x=40,y=190,width=270)
 
         # Password Field
         password = lbl = Label(frame, text="Password", font=("times new roman", 15, "bold"), fg="white", bg="#a43a8e")
         password.place(x=70, y=230)
-        self.txtpass = ttk.Entry(frame,show="*", font=("times new roman",15, "bold"))
+        self.txtpass = ttk.Entry(frame,show="*", font=("times new roman",15, "bold"),textvariable=self.var_pass)
         self.txtpass.place(x=40, y=260, width=270)
 
         # Icons
@@ -118,6 +122,8 @@ class login_window:
                 if opne_main>0:
                     self.new_window=Toplevel()
                     self.app=Face_Recognition_System(self.new_window)
+                    self.var_pass.set("")
+                    self.var_user.set("")
                 else:
                     if not opne_main:
                         return

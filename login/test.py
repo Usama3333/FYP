@@ -16,13 +16,21 @@ from tkinter import filedialog
 
 
 if __name__ == "__main__":
+    # fln=filedialog.asksaveasfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("ALL Files","*.*")))
+    # file= open(str(fln),"w")
+    # file.close()
+    s = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\
+    + 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
+
+    print(s)
+
 
 #     mydata=[]   
 # a = 0
-    fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("ALL Files","*.*")))
-    print(str(fln))
-    print("--------------------")
-    print("/n")
+    # fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open CSV",filetypes=(("CSV File","*.csv"),("ALL Files","*.*")))
+    # print(str(fln))
+    # print("--------------------")
+    # print("/n")
 # with open(fln) as myfile:
 #     csvread=csv.reader(myfile,delimiter=",")
 #     for i in csvread:
@@ -32,29 +40,29 @@ if __name__ == "__main__":
 #         # print(i)
        
 #     print(mydata[1][0])
-file=open(str(fln),'r')
-reader=csv.reader(file)
-L=[]
-uroll=int(input('Enter the Roll No of Student whose section you want to update : '))
-found=False
-# row=1
-for row in reader:
-    if len(row)!=0:
-        if row[0]==str(uroll):
-            found=True
-            section=input('Enter the Section You want to replace : ')
-            row[3]=section
-        L.append(row)
-file.close()
+# file=open(str(fln),'r')
+# reader=csv.reader(file)
+# L=[]
+# uroll=int(input('Enter the Roll No of Student whose section you want to update : '))
+# found=False
+# # row=1
+# for row in reader:
+#     if len(row)!=0:
+#         if row[0]==str(uroll):
+#             found=True
+#             section=input('Enter the Section You want to replace : ')
+#             row[3]=section
+#         L.append(row)
+# file.close()
 
-if found==False:
-    print("Record for the selected Roll num wasnot Found !!")
-else:
-    file=open(str(fln),'w+',newline='')
-    write=csv.writer(file)
-    write.writerows(L)
-    file.seek(1)
-    Reader=csv.reader(file)
-    for row in Reader:
-        print (row)
-    file.close()
+# if found==False:
+#     print("Record for the selected Roll num wasnot Found !!")
+# else:
+#     file=open(str(fln),'w+',newline='')
+#     write=csv.writer(file)
+#     write.writerows(L)
+#     file.seek(1)
+#     Reader=csv.reader(file)
+#     for row in Reader:
+#         print (row)
+#     file.close()
