@@ -15,6 +15,7 @@ from train import Train
 from attendance_system import attendance_system
 from support import Support
 from tkinter import filedialog
+from assistant import Assistant
 
 fln=""
 class Face_Recognition_System:
@@ -113,7 +114,7 @@ class Face_Recognition_System:
         img7=img7.resize((70,70),Image.ANTIALIAS)
         self.photoimg7=ImageTk.PhotoImage(img7)
         
-        b7=Button(self.homeroot, image=self.photoimg7,cursor="hand2",border="0",bg="#bc5cb4",activebackground="#a43a8e")
+        b7=Button(self.homeroot, image=self.photoimg7,command=self.Assistant,cursor="hand2",border="0",bg="#bc5cb4",activebackground="#a43a8e")
         b7.place(x=1278,y=660,width=70,height=70)
         
         assistant_label=Label(self.homeroot,text="Assistant",border=1,font=("Agency FB",15,"bold"),bg="white",fg="#a43a8e")
@@ -151,6 +152,10 @@ class Face_Recognition_System:
     def support(self):
         self.new_window=Toplevel(self.homeroot)
         self.app=Support(self.new_window) 
+        
+    def Assistant(self):
+        self.new_window=Toplevel(self.homeroot)
+        self.app=Assistant(self.new_window) 
         
         
     def train_model(self):
